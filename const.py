@@ -15,8 +15,13 @@ command_list = {
         "label": "エンコード(音声差し替え)",
         "command": 'ffmpeg -i "{{movie_input}}" -itsoffset {{offset}} -i "{{audio_input}}" -c:v copy -c:a aac -b:a 320k -strict experimental -map 0:v -map 1:a "{{output}}"',
     },
+    "5": {
+        "label": "作業フォルダ変更",
+        "command": "",
+    },
     "q": {
         "label": "終了",
         "command": "exit",
     },
 }
+lastPathFileName = "last_save_dir"

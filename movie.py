@@ -22,6 +22,6 @@ def download_movie(url, saveDir=None):
         """,
         "\n",
     )
-    output = f'-o "{saveDir}"' if saveDir else ""
+    output = f'-o "{saveDir}/%("title")s.%(ext)s"' if saveDir else ""
     run_command(f"{const.command_list['1']['command']} {target_url} {output}")
     print(f"target_url: {target_url}")

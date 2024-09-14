@@ -4,6 +4,8 @@ import textwrap
 import threading
 from urllib.parse import parse_qs, urlparse
 
+import const
+
 
 def extract_video_url(url):
     parse_result = urlparse(url)
@@ -56,3 +58,43 @@ def print_dedent(text, end=""):
 def clear_screen():
     # 画面をクリアする
     os.system("cls")
+
+
+def change_dir(lastPath):
+    while True:
+        print_dedent(
+            """
+            作業フォルダを入力してください
+            未入力の場合はカレントディレクトリが対象となります
+            lsでフォルダ一覧を表示します
+            
+            フォルダ: """
+        )
+
+        outputDir = input()
+
+        if outputDir == "ls":
+            print()
+            run_command(
+                f"cd {os.path.abspath(lastPath)} && dir /ad /b" if os.name == "nt" else f"cd {lastPath} && ls -d */"
+            )
+            continue
+
+        outputDir = outputDir if outputDir else lastPath
+
+        if not os.path.exists(outputDir if os.path.isabs(outputDir) else os.path.abspath(f"{lastPath}/{outputDir}")):
+            print_dedent(
+                """
+                フォルダが存在しません
+                """
+            )
+            print(f"入力されたフォルダ: {outputDir}")
+            continue
+
+        outputDir = outputDir if os.path.isabs(outputDir) else os.path.abspath(f"{lastPath}/{outputDir}")
+
+        # last_save_dir に保存
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/{const.lastPathFileName}", "w") as f:
+            f.write(outputDir)
+
+        return outputDir

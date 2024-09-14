@@ -10,7 +10,7 @@ from movie import download_movie
 from detect import detect_start_times
 
 
-def encode_movie():
+def encode_movie(saveDir):
     clear_screen()
 
     print_dedent(
@@ -20,19 +20,7 @@ def encode_movie():
         フォルダ: """
     )
 
-    outputPath = input()
-    if not os.path.exists(outputPath):
-        print_dedent(
-            """
-            フォルダが存在しません
-            """
-        )
-        print(f"入力されたフォルダ: {outputPath}")
-        print()
-        print("エンターを押して続行...")
-        input()
-        return
-    outputPath = os.path.abspath(outputPath)
+    outputPath = saveDir
 
     movie_files = [
         f for f in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, f)) and f.endswith(".mp4")
@@ -61,7 +49,7 @@ def encode_movie():
                 url = input()
                 if not url or not url.startswith("http"):
                     continue
-            download_movie(url, saveDir=f'{outputPath}/%("title")s.%(ext)s')
+            download_movie(url, saveDir=f"{outputPath}")
             movie_files = [
                 f for f in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, f)) and f.endswith(".mp4")
             ]
@@ -76,8 +64,6 @@ def encode_movie():
         )
         print(f"対象フォルダ: {outputPath}")
         print()
-        print("エンターを押して続行...")
-        input()
         return
 
     clear_screen()
@@ -134,8 +120,6 @@ def encode_movie():
             clear_screen()
             return
 
-        os.remove(outputFile)
-
     clear_screen()
     print("動画ファイルと音声ファイルの音声開始地点を解析中...")
 
@@ -191,6 +175,11 @@ def encode_movie():
         .replace("{{offset}}", offset)
         .replace("{{output}}", outputFile)
     )
+
+    os.remove(outputFile)
+
+    # 1秒待機
+    time.sleep(1)
 
     run_command(command, encoding="cp932")
 
