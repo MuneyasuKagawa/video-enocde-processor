@@ -158,6 +158,17 @@ def encode_movie(saveDir):
         if offset == "":
             offset = str(proposed_offset)
             break
+        if offset.startswith("-"):
+            if not offset.replace("-", "").isdigit():
+                print_dedent(
+                    """
+                    数値で入力してください(マイナス可)
+                    """
+                )
+                print(f"入力された値: {offset}")
+                print()
+                continue
+            break
         if not offset.isdigit():
             print_dedent(
                 """
@@ -176,8 +187,9 @@ def encode_movie(saveDir):
         .replace("{{output}}", outputFile)
     )
 
-    os.remove(outputFile)
-
+    if os.path.exists(outputFile):
+        os.remove(outputFile)
+    
     # 1秒待機
     time.sleep(1)
 

@@ -57,8 +57,12 @@ def print_dedent(text, end=""):
 
 def clear_screen():
     # 画面をクリアする
-    os.system("cls")
-
+    # Windowsの場合
+    if os.name == "nt":
+        os.system("cls")
+    # Mac/Linuxの場合
+    else:
+        os.system("clear")
 
 def change_dir(lastPath):
     while True:
