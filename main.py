@@ -6,8 +6,9 @@ from common import clear_screen, print_dedent, change_dir
 import const
 from encode import encode_movie
 from movie import download_movie
+from extract_vocal import extract_vocal
 
-actions = {"1": download_movie, "2": download_audio_wav, "3": download_audio_mp3, "4": encode_movie, "5": change_dir}
+actions = {"1": download_movie, "2": download_audio_wav, "3": download_audio_mp3, "4": encode_movie, "5": extract_vocal, "6": change_dir}
 
 
 def main():
@@ -22,7 +23,7 @@ def main():
         process = 0
 
         if outputDir is None:
-            newDir = actions.get("5")(".")
+            newDir = actions.get("6")(".")
             outputDir = newDir
 
         while True:
@@ -52,17 +53,17 @@ def main():
                 選択: """
             )
 
-            process = input()
+            process = input().strip()
             if process in const.command_list.keys():
                 break
 
-            break
+            continue
 
         if process == "q":
             print()
             sys.exit(0)
 
-        if process == "5":
+        if process == "6":
             action = actions.get(process)
             if action:
                 newDir = action(outputDir)
@@ -80,7 +81,7 @@ def main():
             action = actions.get(process)
             if action:
                 action(url, outputDir)
-
+        
         else:
             action = actions.get(process)
             if action:
