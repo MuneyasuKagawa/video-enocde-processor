@@ -4,11 +4,11 @@ import sys
 from audio import download_audio_mp3, download_audio_wav
 from common import clear_screen, print_dedent, change_dir
 import const
-from encode import encode_movie
+from encode import encode_movie, encode_movie_twitter
 from movie import download_movie
 from extract_vocal import extract_vocal
 
-actions = {"1": download_movie, "2": download_audio_wav, "3": download_audio_mp3, "4": encode_movie, "5": extract_vocal, "6": change_dir}
+actions = {"1": download_movie, "2": download_audio_wav, "3": download_audio_mp3, "4": encode_movie, "5": extract_vocal, "6": change_dir, "7": encode_movie_twitter}
 
 
 def main():

@@ -69,19 +69,23 @@ def encode_movie(saveDir):
     clear_screen()
     for i, movie_file in enumerate(movie_files):
         print(f"{i}) {movie_file}")
-    movie_index = None
-    while True:
-        print_dedent(
-            """
 
-            エンコード対象の動画ファイルを選択してください
-            
-            選択: """
-        )
-        movie_index = input()
-        if not movie_index.isdigit() or int(movie_index) >= len(movie_files):
-            continue
-        break
+    if len(movie_files) == 1:
+        movie_index = "0"
+    else:
+        movie_index = None
+        while True:
+            print_dedent(
+                """
+
+                エンコード対象の動画ファイルを選択してください
+
+                選択: """
+            )
+            movie_index = input()
+            if not movie_index.isdigit() or int(movie_index) >= len(movie_files):
+                continue
+            break
 
     movie_input = os.path.join(outputPath, movie_files[int(movie_index)])
 
@@ -89,18 +93,21 @@ def encode_movie(saveDir):
     for i, audio_file in enumerate(audio_files):
         print(f"{i}) {audio_file}")
 
-    audio_index = None
-    while True:
-        print_dedent(
-            """
-            
-            エンコード対象の音声ファイルを選択してください
-            選択: """
-        )
-        audio_index = input()
-        if not audio_index.isdigit() or int(audio_index) >= len(audio_files):
-            continue
-        break
+    if len(audio_files) == 1:
+        audio_index = "0"
+    else:
+        audio_index = None
+        while True:
+            print_dedent(
+                """
+
+                エンコード対象の音声ファイルを選択してください
+                選択: """
+            )
+            audio_index = input()
+            if not audio_index.isdigit() or int(audio_index) >= len(audio_files):
+                continue
+            break
 
     audio_input = os.path.join(outputPath, audio_files[int(audio_index)])
 
@@ -158,18 +165,10 @@ def encode_movie(saveDir):
         if offset == "":
             offset = str(proposed_offset)
             break
-        if offset.startswith("-"):
-            if not offset.replace("-", "").isdigit():
-                print_dedent(
-                    """
-                    数値で入力してください(マイナス可)
-                    """
-                )
-                print(f"入力された値: {offset}")
-                print()
-                continue
+        try:
+            float(offset)
             break
-        if not offset.isdigit():
+        except ValueError:
             print_dedent(
                 """
                 数値で入力してください(マイナス可)
@@ -208,3 +207,105 @@ def get_sampwidth(filename):
     with wave.open(filename, "r") as audio_file:
         _, sampwidth, _, _, _, _ = audio_file.getparams()
         return sampwidth
+
+
+def encode_movie_twitter(saveDir):
+    clear_screen()
+
+    print_dedent(
+        """\
+        エンコード対象の作業フォルダを入力してください
+        
+        フォルダ: """
+    )
+
+    outputPath = saveDir
+
+    movie_files = [
+        f for f in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, f)) and f.endswith(".mp4")
+    ]
+    if not movie_files:
+        while True:
+            print_dedent(
+                """
+                動画ファイルが存在しません
+                本家動画のDLを行いますか？(Y/n): """
+            )
+            download = input()
+            if download in ["", "y", "n"]:
+                break
+        if download == "" or download.lower() == "y":
+            url = None
+            while not url:
+                print_dedent(
+                    """
+                    動画のURLを入力してください
+                    URL: """
+                )
+                url = input()
+                if not url or not url.startswith("http"):
+                    continue
+            download_movie(url, saveDir=f"{outputPath}")
+            movie_files = [
+                f for f in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, f)) and f.endswith(".mp4")
+            ]
+        else:
+            return
+
+    clear_screen()
+    for i, movie_file in enumerate(movie_files):
+        print(f"{i}) {movie_file}")
+
+    if len(movie_files) == 1:
+        movie_index = "0"
+    else:
+        movie_index = None
+        while True:
+            print_dedent(
+                """
+
+                エンコード対象の動画ファイルを選択してください
+
+                選択: """
+            )
+            movie_index = input()
+            if not movie_index.isdigit() or int(movie_index) >= len(movie_files):
+                continue
+            break
+
+    movie_input = os.path.join(outputPath, movie_files[int(movie_index)])
+
+    outputFile = os.path.join(outputPath, f"output_twitter.mp4")
+    if os.path.exists(outputFile):
+        while True:
+            print_dedent(
+                """
+                出力先にすでにファイルが存在します
+                上書きしますか？(y/n): """
+            )
+            overwrite = input()
+            if overwrite in ["y", "n"]:
+                break
+        if overwrite == "n":
+            clear_screen()
+            return
+
+    command = (
+        const.command_list["7"]["command"]
+        .replace("{{movie_input}}", movie_input)
+        .replace("{{output}}", outputFile)
+    )
+
+    if os.path.exists(outputFile):
+        os.remove(outputFile)
+    time.sleep(1)
+
+    run_command(command, encoding="cp932")
+
+    clear_screen()
+
+    print_dedent(
+        f"""\
+        出力先: {outputFile}
+        """
+    )

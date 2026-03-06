@@ -23,6 +23,10 @@ command_list = {
         "label": "作業フォルダ変更",
         "command": "",
     },
+    "7": {
+        "label": "Twitter投稿用サイズ削減",
+        "command": 'ffmpeg -i "{{movie_input}}" -filter:v "scale=\'min(1280,iw)\':\'min(720,ih)\':force_original_aspect_ratio=decrease,fps=30" -c:v libx264 -preset medium -profile:v high -level 4.1 -pix_fmt yuv420p -crf 28 -movflags +faststart -c:a aac -b:a 96k -ac 2 -ar 44100 -map 0:v:0 -map 0:a:0 "{{output}}"',
+    },
     "q": {
         "label": "終了",
         "command": "exit",
